@@ -1,0 +1,1 @@
+Este directorio contiene los registros de ejecución del proyecto. Los archivos de registro se generan automáticamente durante la ejecución del programa y se almacenan en este directorio para su posterior análisis y depuración.

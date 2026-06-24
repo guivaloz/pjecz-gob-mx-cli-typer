@@ -1,0 +1,38 @@
+[project]
+name = "pjecz-gob-mx-cli-typer"
+version = "0.1.0"
+description = "CLI (Command Line Interface) para construir el nuevo sitio web."
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "psycopg2-binary>=2.9.11",
+    "pydantic>=2.13.1",
+    "pydantic-settings>=2.13.1",
+    "pytz>=2026.2",
+    "requests>=2.33.1",
+    "rich>=15.0.0",
+    "sqlalchemy>=2.0.49",
+    "sqlalchemy-utils>=0.42.1",
+    "sqlmodel>=0.0.38",
+    "typer>=0.24.1",
+    "unidecode>=1.4.0",
+]
+
+[tool.black]
+line-length = 128
+
+[tool.isort]
+line_length = 128
+profile = "black"
+
+[tool.basedpyright]
+pythonVersion = "3.14"
+typeCheckingMode = "basic"
+reportCallIssue = "hint"
+reportMissingImports = "warning"
+reportUndefinedVariable = "warning"
+exclude = ["**/tests"]
+
+[tool.ruff]
+ignore = ["F821"]
+line-length = 128
