@@ -15,7 +15,10 @@ class Settings(BaseSettings):
     DB_HOST: str = "localhost"
     DB_PORT: int = 5432
     DB_NAME: str = "database"
+    GENERATED_DIR: str = "generated"
+    RCLONE_REMOTES_CSV: str = "rclone-remotes.csv"
     SQLALCHEMY_DATABASE_URI: str = f"postgresql://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+    SOURCES_DIR: str = "sources"
     TZ: str = "America/Mexico_City"
 
     class Config:

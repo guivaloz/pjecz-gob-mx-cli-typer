@@ -76,14 +76,6 @@ then
     . ~/.bashrc
 fi
 
-if [[ "$TOOLBOX_NAME" != "pjecz-developer" ]]
-then
-    echo "-- Debe de ingresar al toolbox"
-    echo "   toolbox enter pjecz-developer"
-    echo
-    exit 1
-fi
-
 if command -v figlet &> /dev/null
 then
     figlet PJECZ gob mx CLI Typer
