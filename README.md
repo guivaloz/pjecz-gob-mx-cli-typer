@@ -25,10 +25,10 @@ cli --help
 
 ## Instalación
 
-Crear un entorno virtual
+Crear un entorno virtual con Python 3.14
 
 ```bash
-python3 -m venv .venv
+python3.14 -m venv .venv
 ```
 
 Activar el entorno virtual
@@ -36,6 +36,12 @@ Activar el entorno virtual
 ```bash
 source .venv/bin/activate  # En Linux o macOS
 .venv\Scripts\activate  # En Windows
+```
+
+Si no lo tiene instalado, instalar `uv`
+
+```bash
+pip install uv
 ```
 
 Instalar las dependencias por medio de `uv`
@@ -87,7 +93,10 @@ then
     echo "   DB_NAME: ${DB_NAME}"
     echo "   DB_USER: ${DB_USER}"
     echo "   DB_PASS: ${DB_PASS}"
-    echo "   GOOGLE_APPLICATION_CREDENTIALS: ${GOOGLE_APPLICATION_CREDENTIALS}"
+    echo "   GENERATED_DIR: ${GENERATED_DIR}"
+    echo "   RCLONE_REMOTES_CSV: ${RCLONE_REMOTES_CSV}"
+    echo "   SQLALCHEMY_DATABASE_URI: ${SQLALCHEMY_DATABASE_URI}"
+    echo "   SOURCES_DIR: ${SOURCES_DIR}"
     echo "   TZ: ${TZ}"
     echo
     export PGHOST=$DB_HOST
