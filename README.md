@@ -9,7 +9,7 @@ CLI (Command Line Interface) para construir el nuevo sitio web.
 - `pjecz_gob_mx_cli_typer/`: Contiene el código fuente del proyecto.
 - `sources/`: Directorio para almacenar los archivos fuente que se utilizarán en la construcción del sitio web.
 
-## Uso después de la instalación
+## Uso
 
 Cargar el archivo `.bashrc`
 
@@ -21,6 +21,18 @@ Ejecutar el CLI con la opción `--help` para ver las opciones disponibles
 
 ```bash
 cli --help
+```
+
+Para copiar los archivos markdown desde Google Drive al local
+
+```bash
+cli rclone copiar --guardar
+```
+
+Para generar los archivos mardown para Astro a partir de los archivos 
+
+```bash
+cli astro generar --guadar
 ```
 
 ## Instalación

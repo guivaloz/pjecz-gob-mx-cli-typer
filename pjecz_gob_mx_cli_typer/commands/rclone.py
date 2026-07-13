@@ -28,7 +28,7 @@ app = Typer(name="rclone", help="RCLONE commands")
 def copiar(
     esta_rama: str = "",
     este_remoto: str = "",
-    guardar: Annotated[bool, Option("--guardar", "-g", help="Guardar o simular (si no se usa) la copia")] = False,
+    guardar: Annotated[bool, Option("--guardar", "-g", help="Si no se usa, se simula la copia")] = False,
 ):
     """Copiar archivos desde Google Workspace al directorio SOURCES_DIR leyendo RCLONE_REMOTES_CSV"""
     console = Console()
