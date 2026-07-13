@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "typer-and-rich": {
+      "source": "jamie-bitflight/claude_skills",
+      "sourceType": "github",
+      "skillPath": "plugins/python3-development/skills/typer-and-rich/SKILL.md",
+      "computedHash": "e0bc0e413a72852bd45386207ac755780e33e72da18f3d73b4faf4c37203840d"
+    }
+  }
+}

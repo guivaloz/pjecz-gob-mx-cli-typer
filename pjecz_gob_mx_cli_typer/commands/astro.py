@@ -2,10 +2,8 @@
 Astro commands
 """
 
-import csv
 import logging
-import os
-import subprocess
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Annotated
 
@@ -13,6 +11,8 @@ from rich.console import Console
 from typer import Option, Typer
 
 from pjecz_gob_mx_cli_typer.config.settings import get_settings
+
+METADATA_KEYS = {"Title", "Summary", "Date", "Modify", "Key"}
 
 bitacora = logging.getLogger(__name__)
 bitacora.setLevel(logging.INFO)
@@ -22,6 +22,25 @@ empunadura.setFormatter(formato)
 bitacora.addHandler(empunadura)
 
 app = Typer(name="astro", help="Astro commands")
+
+
+def parse_metadata(contenido: str) -> tuple[dict[str, str], str]:
+    """Parse metadata from first lines and return metadata dict + content without metadata"""
+    metadata = {}
+    lines = contenido.split("\n")
+    idx = 0
+    for idx, line in enumerate(lines):
+        if ":" in line:
+            key, value = line.split(":", 1)
+            key = key.strip()
+            if key in METADATA_KEYS:
+                metadata[key] = value.strip()
+            else:
+                break
+        else:
+            break
+    content_without_metadata = "\n".join(lines[idx:])
+    return metadata, content_without_metadata
 
 
 @app.command()
@@ -63,6 +82,9 @@ def generar(
             with open(archivo_md, "r", encoding="utf-8") as puntero:
                 contenido = puntero.read()
 
+                # Parsear metadatos del archivo fuente
+                metadata, contenido_limpio = parse_metadata(contenido)
+
                 # Para cada archivo hay que poner en las primeras lineas los metadatos para Astro
                 metadatos = []
 
@@ -72,17 +94,21 @@ def generar(
                 # 1. Que se base en el BaseLayout
                 metadatos.append("layout: BaseLayout")
 
-                # 2. Que tenga un título basado en el nombre del archivo
-                metadatos.append(f"title: {archivo_md.stem}")
+                # 2. Título: usar Title del archivo si existe, si no usar el nombre del archivo
+                title = metadata.get("Title", archivo_md.stem)
+                metadatos.append(f"title: {title}")
 
-                # 3. Que tenga una fecha de creación basada en la fecha del archivo
-                metadatos.append(f"created: {archivo_md.stat().st_ctime}")
+                # 3. Descripción: usar Summary del archivo si existe, si no usar el título
+                description = metadata.get("Summary", title)
+                metadatos.append(f"description: {description}")
 
-                # 4. Que tenga una fecha de modificación basada en la fecha del archivo
-                metadatos.append(f"modified: {archivo_md.stat().st_mtime}")
+                # 4. Fecha de creación en formato ISO
+                created = datetime.fromtimestamp(archivo_md.stat().st_ctime, tz=timezone.utc).isoformat()
+                metadatos.append(f"created: {created}")
 
-                # 5. Que tenga una ruta basada en la ruta relativa del archivo
-                metadatos.append(f"path: {ruta_relativa}")
+                # 5. Fecha de modificación en formato ISO
+                modified = datetime.fromtimestamp(archivo_md.stat().st_mtime, tz=timezone.utc).isoformat()
+                metadatos.append(f"modified: {modified}")
 
                 # 6. Separador ---
                 metadatos.append("---")
@@ -92,7 +118,7 @@ def generar(
                     archivo_generado = generated_dir / ruta_relativa
                     archivo_generado.parent.mkdir(parents=True, exist_ok=True)
                     with open(archivo_generado, "w", encoding="utf-8") as puntero_generado:
-                        puntero_generado.write("\n".join(metadatos) + "\n\n" + contenido)
+                        puntero_generado.write("\n".join(metadatos) + "\n\n" + contenido_limpio)
                         console.print(f"Archivo generado: {archivo_generado}")
 
                 # Incrementar el contador de archivos generados
