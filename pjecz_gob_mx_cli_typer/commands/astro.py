@@ -25,16 +25,23 @@ app = Typer(name="astro", help="Astro commands")
 
 
 @app.command()
-def generar(esta_rama: str = ""):
+def generar(
+    esta_rama: str = "",
+    guardar: Annotated[bool, Option("--guardar", "-g", help="Si no se usa, se simula la generación")] = False,
+):
     """Generar archivos para Astro en GENERATED_DIR leyendo RCLONE_REMOTES_CSV"""
     console = Console()
-    console.print("Pendiente de implementar la funcionalidad.")
+    if guardar:
+        msg = "Generando los archivos para Astro en GENERATED_DIR..."
+    else:
+        msg = "Simulando la generación de los archivos para Astro en GENERATED_DIR..."
+    bitacora.info(msg)
+    console.print(msg)
 
     # Obtener la configuración
     settings = get_settings()
     generated_dir = Path(settings.GENERATED_DIR)
     sources_dir = Path(settings.SOURCES_DIR)
-    rclone_remotes_csv = Path(settings.RCLONE_REMOTES_CSV)
 
     # Inicializar los contadores de archivos generados
     archivos_generados_contador = 0
@@ -44,6 +51,10 @@ def generar(esta_rama: str = ""):
         if archivo_md.is_file():
             # La ruta relativa del archivo .md con respecto a SOURCES_DIR
             ruta_relativa = archivo_md.relative_to(sources_dir)
+
+            # Saltar si se especifica una rama y la ruta no contiene la rama
+            if esta_rama and not ruta_relativa.parts[0].startswith(esta_rama):
+                continue
 
             # Aquí puedes agregar la lógica para procesar cada archivo .md
             console.print(f"Procesando archivo: {ruta_relativa}")
@@ -77,12 +88,32 @@ def generar(esta_rama: str = ""):
                 metadatos.append("---")
 
                 # Crear un archivo con el mismo nombre en GENERATED_DIR
-                archivo_generado = generated_dir / ruta_relativa
-                archivo_generado.parent.mkdir(parents=True, exist_ok=True)
-                with open(archivo_generado, "w", encoding="utf-8") as puntero_generado:
-                    puntero_generado.write("\n".join(metadatos) + "\n\n" + contenido)
-                    console.print(f"Archivo generado: {archivo_generado}")
-                    archivos_generados_contador += 1
+                if guardar:
+                    archivo_generado = generated_dir / ruta_relativa
+                    archivo_generado.parent.mkdir(parents=True, exist_ok=True)
+                    with open(archivo_generado, "w", encoding="utf-8") as puntero_generado:
+                        puntero_generado.write("\n".join(metadatos) + "\n\n" + contenido)
+                        console.print(f"Archivo generado: {archivo_generado}")
+
+                # Incrementar el contador de archivos generados
+                archivos_generados_contador += 1
 
     # Mensaje final
-    console.print(f"[green]Archivos generados: {archivos_generados_contador}[/green]")
+    if guardar:
+        if archivos_generados_contador > 0:
+            msg = f"Finaliza la generación de archivos. Se generaron {archivos_generados_contador} archivos."
+            bitacora.info(msg)
+            console.print(f"[green]{msg}[/green]")
+        else:
+            msg = "Finaliza la generación de archivos. No se generaron archivos."
+            bitacora.info(msg)
+            console.print(f"[yellow]{msg}[/yellow]")
+    else:
+        if archivos_generados_contador > 0:
+            msg = f"Simulación finalizada. Se pueden generar {archivos_generados_contador} archivos."
+            bitacora.info(msg)
+            console.print(f"[green]{msg}[/green]")
+        else:
+            msg = "Simulación finalizada. No hay archivos para generar."
+            bitacora.info(msg)
+            console.print(f"[yellow]{msg}[/yellow]")
